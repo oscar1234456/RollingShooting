@@ -81,18 +81,31 @@ public class Game extends JPanel implements ActionListener {
     }
 
     public void checkPlayer() {
-        try {
-            recp = Integer.parseInt(JOptionPane.showInputDialog(null, "<html>Type 1 to Singleplayer<br>"
-                    + "Type 2 to Multiplayer</html>", "Game type", 1));
+    	while(true) {
+    		try {
+    			int choose1 = 0;
+                recp = Integer.parseInt(JOptionPane.showInputDialog(null, "<html>Type 1 to Singleplayer<br>"
+                        + "Type 2 to Multiplayer</html>", "Game type", 1));
 
-            if (recp == 2) {
-                p2 = true;
+                if (recp == 2) {
+                    p2 = true;
+                }
+                	/*choose1 = JOptionPane.showConfirmDialog(null, "您確定要離開?", "離開", JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
+                        if(choose1 == 0) {
+                        	System.out.println("BYe");
+                        	System.exit(0);
+                        }*/
+                
+                break;
+            } catch (NumberFormatException e) {   //must Add the control mode
+            	int choose2 = 0;
+            	 choose2 = JOptionPane.showConfirmDialog(null, "錯誤:您not enter the true number", "Error", JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE);
+                if(choose2 == 1) {
+                	System.out.println("BYe");
+                	System.exit(0);
+                }
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Error: " + e);
-            System.exit(0);
-        }
-
+    	}
     }
 
     public JMenuBar criarMenu() {
