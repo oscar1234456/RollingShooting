@@ -5,25 +5,19 @@ import com.greatspace.model.Bullet;
 import com.greatspace.model.Enemy;
 import com.greatspace.model.Player;
 import com.greatspace.proxy.ProxyImage;
+
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+
+import javax.swing.*;
 
 /**
  * @author: Derick Felix
@@ -41,11 +35,18 @@ public class Game extends JPanel implements ActionListener {
     private final Timer timer;
     private final Player naveUm;
     private final Player naveDois;
+    private JDialog frm ;
+	private JRadioButton rob1 ;
+	private JRadioButton rob2;
+	private ButtonGroup bgroup ;
+	private JButton btn1 ;
+	private JButton btn2 ;
 
     private boolean p2 = false;
     private boolean emJogo;
     private boolean inicio;
     private boolean ganhoJogo;
+   
 
     private List<Enemy> inimigos;
 
@@ -81,31 +82,34 @@ public class Game extends JPanel implements ActionListener {
     }
 
     public void checkPlayer() {
-    	while(true) {
-    		try {
-    			int choose1 = 0;
-                recp = Integer.parseInt(JOptionPane.showInputDialog(null, "<html>Type 1 to Singleplayer<br>"
-                        + "Type 2 to Multiplayer</html>", "Game type", 1));
-
-                if (recp == 2) {
-                    p2 = true;
-                }
-                	/*choose1 = JOptionPane.showConfirmDialog(null, "您確定要離開?", "離開", JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
-                        if(choose1 == 0) {
-                        	System.out.println("BYe");
-                        	System.exit(0);
-                        }*/
-                
-                break;
-            } catch (NumberFormatException e) {   //must Add the control mode
-            	int choose2 = 0;
-            	 choose2 = JOptionPane.showConfirmDialog(null, "錯誤:您not enter the true number", "Error", JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE);
-                if(choose2 == 1) {
-                	System.out.println("BYe");
-                	System.exit(0);
-                }
-            }
-    	}
+    	
+    	frm = new JDialog(Window.frame,"選擇遊玩模式",true);
+    	rob1 = new JRadioButton("單人遊玩");
+    	rob2 = new JRadioButton("雙人遊玩");
+    	bgroup = new ButtonGroup();
+    	btn1 = new JButton("確認");
+    	btn2 = new JButton("取消");
+    	
+    	frm.setLayout(null);
+    	bgroup.add(rob2);
+    	bgroup.add(rob1);
+    	frm.add(rob1);
+    	frm.add(rob2);
+    	frm.add(btn1);
+    	frm.add(btn2);
+    	btn1.addActionListener(new playerCheck());
+    	btn2.addActionListener(new playerCheck());
+    	rob1.setSelected(true);
+    	rob1.setBounds(20,40,140,20);
+    	rob2.setBounds(20,70,140,20);
+    	btn1.setBounds(20,100,140,20);
+    	btn2.setBounds(20,130,140,20);
+    	frm.setLocationRelativeTo(null);
+    	frm.setResizable(false);
+    	frm.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    	frm.setSize(200, 200);
+    	frm.setVisible(true);
+    	frm.setModal(true);
     }
 
     public JMenuBar criarMenu() {
@@ -443,5 +447,36 @@ public class Game extends JPanel implements ActionListener {
             }
         }
 
+    }
+    
+    private class playerCheck implements ActionListener {
+    	public void actionPerformed(ActionEvent e) {
+    		JButton btn = (JButton) e.getSource();
+    		System.out.println("in");
+    		if(btn == btn1) {
+    
+    			if(rob1.isSelected()) {
+    				 p2 = false;
+    				
+    			}else {
+    				p2 = true;
+    			}
+    			frm.setVisible(false);
+    			frm.setModal(false);
+    			System.out.println(recp);
+    			
+    		}else {
+    			int choose1;
+    			System.out.println("no");
+    			choose1 = JOptionPane.showConfirmDialog(null, "您確定要離開?", "離開", JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
+                if(choose1 == 0) {
+                	frm.setModal(false);
+                	System.out.println("BYe");
+                	System.exit(0);
+                }
+    			
+    		}
+    	}
+    	
     }
 }
