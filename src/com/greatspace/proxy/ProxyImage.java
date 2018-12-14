@@ -15,7 +15,7 @@ import com.greatspace.interfaces.IImage;
 public class ProxyImage implements IImage {
 
     private RealImage realImage;
-    private final String path;
+    private final String path; //路徑常數
 
     public ProxyImage(String path) {
         this.path = path;
