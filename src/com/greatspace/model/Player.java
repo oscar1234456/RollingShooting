@@ -18,7 +18,7 @@ public class Player extends GameObject {
     private int x, y;
     private int dx, dy;
     private boolean morto;
-    private static ProxyImage imagemProxy;
+    private static ProxyImage imagemProxy; //增加代理訪問層物件
     private Bullet missel;
     
     private Controller controle;
