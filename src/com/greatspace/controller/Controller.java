@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
  *
  * @author Dayvson
  */
-public enum Controller implements IStrategy {
+public enum Controller implements IStrategy { //列舉
     PLAYER_1 {
         @Override
         public void keyPressed(Player player, KeyEvent key){
