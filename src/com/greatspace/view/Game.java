@@ -54,7 +54,7 @@ public class Game extends JPanel implements ActionListener {
 
         this.nave = new Player();
 
-        setFocusable(true);
+        setFocusable(true); //為了聆聽keyListener 須保持Focus
         setDoubleBuffered(true);
         addKeyListener(new TecladoAdapter());
 
@@ -112,55 +112,76 @@ public class Game extends JPanel implements ActionListener {
     	frm.setModal(true);
     }
 
-    public JMenuBar criarMenu() {
-        // Create a new MenuBar
-        JMenuBar menub = new JMenuBar();
-        // Create a new Menu
-        JMenu game = new JMenu("Game");
-        // Create a new Menu Item of Jogo menu
-        JMenuItem close = new JMenuItem("Close");
-        close.addActionListener((ActionEvent e) -> {
-            System.exit(0);
+    public JMenuBar createMenu() {
+        
+        JMenuBar menuBar = new JMenuBar(); //建構MenuBar物件
+        
+        JMenu game = new JMenu("視窗");  //建構JMenu物件
+       
+        JMenuItem close = new JMenuItem("結束"); //建構JMenuItem物件
+        
+        close.addActionListener((ActionEvent e) -> {   //匿名類別註冊事件
+        	int choose1;
+			//確認使用者是否真的要離開
+			choose1 = JOptionPane.showConfirmDialog(null, "您確定要離開?", "離開", 
+					JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
+			if(choose1 == 0) {
+            	System.exit(0); //關閉程式
+            }
         });
-        // Add fechar menu item to the jogo menu
+        
         game.add(close);
 
-        JMenu help = new JMenu("Help");
+        JMenu help = new JMenu("幫助");
 
-        JMenuItem about = new JMenuItem("About");
-        about.addActionListener((ActionEvent e) -> {
-            JOptionPane.showMessageDialog(null, "<html><strong>Great Space</strong><br> "
-                    + "Developed by <strong>Derick Felix</strong>!<br><br>"
-                    + "<strong>What's new:</strong><br><br>"
-                    + "- Bug Fixes <br>"
-                    + "- Changes in game controler <br>"
+        JMenuItem about = new JMenuItem("關於");
+        
+        about.addActionListener((ActionEvent e) -> {	//匿名類別註冊事件
+            JOptionPane.showMessageDialog(null, "<html><strong>宇宙射擊遊戲</strong><br><br> "
+                    + "原作者: <strong>Derick Felix</strong>!<br>"
+                    +"改善與改寫者: <strong>陳泰元</strong><br>"
+                    +"本遊戲版權屬於原作者以及改寫者<br>"
+                    +"如有侵權疑慮 <strong>敬請告知</strong>"
                     + "<br></html>", "About", 1);
         });
-        JMenuItem htp = new JMenuItem("How to Play");
+        
+        JMenuItem htp = new JMenuItem("遊戲說明");
         htp.addActionListener((ActionEvent e) -> {
-            JOptionPane.showMessageDialog(null, "<html>"
-                    + "<strong>Player 1</strong><br>"
-                    + "Fire - <strong>G</strong><br>"
-                    + "Up - <strong>W</strong><br>"
-                    + "Down - <strong>S</strong><br>"
-                    + "Left - <strong>A</strong><br>"
-                    + "Right - <strong>D</strong><br><br>"
-                    + "<strong>Player 2</strong><br>"
-                    + "Fire - <strong>Insert</strong><br>"
-                    + "Up - <strong>UP ARROW</strong><br>"
-                    + "Down - <strong>DOWN ARROW</strong><br>"
-                    + "Left - <strong>LEFT ARROW</strong><br>"
-                    + "Right - <strong>RIGHT ARROW</strong><br>"
-                    + "</html>", "How to play", JOptionPane.QUESTION_MESSAGE);
+        	if(p2==true) {
+        		JOptionPane.showMessageDialog(null, "<html>"
+        				+ "<strong>玩家 1</strong><br>"
+                        + "發射子彈 - <strong>G</strong><br>"
+                        + "控制往上 - <strong>W</strong><br>"
+                        + "控制往下 - <strong>S</strong><br>"
+                        + "控制向左 - <strong>A</strong><br>"
+                        + "控制向右 - <strong>D</strong><br><br>"
+                        + "<strong>玩家 2</strong><br>"
+                        + "發射子彈 - <strong>Insert</strong><br>"
+                        + "控制往上 - <strong>方向鍵 上</strong><br>"
+                        + "控制往下 - <strong>方向鍵 下</strong><br>"
+                        + "控制向左 - <strong>方向鍵 左</strong><br>"
+                        + "控制向右 - <strong>方向鍵 右</strong><br>"
+                        + "</html>", "雙人遊戲說明", JOptionPane.QUESTION_MESSAGE);
+        	}else {
+        		JOptionPane.showMessageDialog(null, "<html>"
+        				+ "<br><strong>玩家 1</strong><br>"
+                        + "發射子彈 - <strong>G</strong><br>"
+                        + "控制往上 - <strong>W</strong><br>"
+                        + "控制往下 - <strong>S</strong><br>"
+                        + "控制向左 - <strong>A</strong><br>"
+                        + "控制向右 - <strong>D</strong><br><br>"
+                        + "</html>", "單人遊戲說明", JOptionPane.QUESTION_MESSAGE);
+        	}
+            
         });
-        // Add coj and sobre menu item to ajuda menu
+        
         help.add(htp);
         help.add(about);
-        // Add jogo and ajuda menu to the Menu Bar
-        menub.add(game);
-        menub.add(help);
-        // Return the menu bar
-        return menub;
+       
+        menuBar.add(game);
+        menuBar.add(help);
+        
+        return menuBar;
     }
 
     private void initEnemy() {
@@ -184,6 +205,7 @@ public class Game extends JPanel implements ActionListener {
 
             ini.setVisivel(true);
             inimigos.add(ini);
+            
         }
     }
 
@@ -237,6 +259,7 @@ public class Game extends JPanel implements ActionListener {
             ImageIcon ganhojogo = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won.png"));
 
             graficos.drawImage(ganhojogo.getImage(), 0, 0, null);
+            
 
         } else if (inicio) {
 
@@ -449,30 +472,37 @@ public class Game extends JPanel implements ActionListener {
 
     }
     
+    /**
+   	 * @brief 實作ActionListener的內部類別 改變遊戲人數
+   	 */
     private class playerCheck implements ActionListener {
     	public void actionPerformed(ActionEvent e) {
     		JButton btn = (JButton) e.getSource();
-    		System.out.println("in");
-    		if(btn == btn1) {
+    		
+    		if(btn == btn1) { //使用者按下確認時
     
-    			if(rob1.isSelected()) {
+    			if(rob1.isSelected()) {	 //使用者選擇單人遊玩時
     				 p2 = false;
     				
-    			}else {
+    			}else {		//使用者選擇雙人遊玩時
     				p2 = true;
     			}
-    			frm.setVisible(false);
-    			frm.setModal(false);
-    			System.out.println(recp);
+    			frm.setVisible(false); //將Dialog視窗關閉
+    			frm.setModal(false); //主控權交還Window.Frame
+    			System.out.println(p2);
     			
-    		}else {
+    		}else {		//使用者按下取消時
+    			
     			int choose1;
-    			System.out.println("no");
-    			choose1 = JOptionPane.showConfirmDialog(null, "您確定要離開?", "離開", JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
-                if(choose1 == 0) {
-                	frm.setModal(false);
-                	System.out.println("BYe");
-                	System.exit(0);
+    			
+    			//確認使用者是否真的要離開
+    			choose1 = JOptionPane.showConfirmDialog(null, "您確定要離開?", "離開", 
+    					JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
+               
+    			if(choose1 == 0) {
+                	frm.setModal(false); //主控權交還Window.Frame
+                	System.out.println("Bye");
+                	System.exit(0); //關閉程式
                 }
     			
     		}
