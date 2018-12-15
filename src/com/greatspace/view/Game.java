@@ -275,7 +275,7 @@ public class Game extends JPanel implements ActionListener {
             graficos.drawImage(fimJogo.getImage(), 0, 0, null);
         }
 
-       // g.dispose();
+        g.dispose();
 
     }
 
