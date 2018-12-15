@@ -71,14 +71,16 @@ public class Game extends JPanel implements ActionListener {
         naveDois.setY(200);
         naveDois.setControle(Controller.PLAYER_2);
 
-        emJogo = false;
-        ganhoJogo = false;
-        inicio = true;
+        //遊戲狀態
+        emJogo = false; //是否在遊戲中
+        ganhoJogo = false;//是否已經贏了
+        inicio = true;//在選單狀態
 
         initEnemy();
 
-        timer = new Timer(5, this);
-        timer.start();
+        //設定計時器並且以Game game當聆聽者隨時執行actionPerformed
+        timer = new Timer(5, this); //緩衝延遲 5 sec
+        timer.start(); //開始計時 
     }
 
     public void checkPlayer() {
@@ -186,11 +188,11 @@ public class Game extends JPanel implements ActionListener {
 
     private void initEnemy() {
         inimigos = new ArrayList<>();
-        Enemy inimigo = new Enemy();
+        Enemy inimigo = new Enemy();//建構敵人樣本物件
         ProxyImage imagemInimigoUm = new ProxyImage("/com/greatspace/sprites/enemy_1.gif");
         ProxyImage imagemInimigoDois = new ProxyImage("/com/greatspace/sprites/enemy_2.gif");
-        for (int i = 0; i < 100; i++) {
-            Enemy ini = (Enemy) inimigo.clone();
+        for (int i = 0; i < 1; i++) {
+            Enemy ini = (Enemy) inimigo.clone();//複製敵人物件
             ini.setX(Enemy.GerarPosX());
             ini.setY(Enemy.GerarPosY());
 
@@ -200,7 +202,7 @@ public class Game extends JPanel implements ActionListener {
                 ini.setImagem(imagemInimigoUm.loadImage().getImage());
             }
 
-            ini.setAltura(ini.getImagem().getHeight(null));
+            ini.setAltura(ini.getImagem().getHeight(null)); //設立圖片邊界用以得知不可觸碰點
             ini.setLargura(ini.getImagem().getWidth(null));
 
             ini.setVisivel(true);
@@ -217,7 +219,7 @@ public class Game extends JPanel implements ActionListener {
 
         if (emJogo) {
 
-            if (naveUm.isMorto() == false) {
+            if (naveUm.isMorto() == false) { //玩家還沒死
                 graficos.drawImage(naveUm.getImagem(), naveUm.getX(), naveUm.getY(), this);
             }
             if (p2 == true) {
@@ -273,13 +275,13 @@ public class Game extends JPanel implements ActionListener {
             graficos.drawImage(fimJogo.getImage(), 0, 0, null);
         }
 
-        g.dispose();
+       // g.dispose();
 
     }
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-
+    	System.out.println("ac main");
         if (inimigos.isEmpty()) {
             emJogo = false;
             ganhoJogo = true;
@@ -432,42 +434,59 @@ public class Game extends JPanel implements ActionListener {
     private class TecladoAdapter extends KeyAdapter {
 
         @Override
-        public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                if (emJogo == false) {
-                    emJogo = true;
-                    naveUm.setMorto(false);
+        public void keyPressed(KeyEvent e) { //有按鍵按下時
+            //如果按下Enter鍵
+        	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            	System.out.println("tec enter");
+            	
+                if (emJogo == false) { //判別現在是否正在遊戲當中
+                    //進來就表示不在遊戲中
+                	emJogo = true; //使遊戲狀態改為開始
+                    
+                	//玩家狀態設定為 存活
+                	naveUm.setMorto(false);
                     naveDois.setMorto(false);
-                    ganhoJogo = false;
-                    if (inicio == true) {
+                    ganhoJogo = false; //贏局狀態改為false
+                    
+                    if (inicio == true) { //離開選單畫面
                         inicio = false;
                     }
 
+                    //初始化玩家位置
                     naveUm.setX(100);
                     naveUm.setY(100);
 
                     naveDois.setX(100);
                     naveDois.setY(200);
 
+                    //初始化敵人物件
                     initEnemy();
+                    System.out.println("Enters");
                 }
-            }
-            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                emJogo = false;
-            }
+                
+            }else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  //如果按下Esc鍵時
+                emJogo = false; //將遊戲狀態改為不在遊戲中
 
-            naveUm.getControle().keyPressed(naveUm, e);
-            if (p2) {
-                naveDois.getControle().keyPressed(naveDois, e);
-            }
+                System.out.println("Esc");
+                
+            }else {			//如果不為Enter或Esc鍵時
+        		naveUm.getControle().keyPressed(naveUm, e); //傳送按鍵類別給玩家1物件做後續控制
+                if (p2) { //如果是雙人遊戲
+                    naveDois.getControle().keyPressed(naveDois, e); //傳送按鍵類別給玩家2物件做後續控制
+                }
+        	}
+
         }
 
         @Override
-        public void keyReleased(KeyEvent e) {
-            naveUm.getControle().keyPressed(naveUm, e);
-            if (p2) {
-                naveDois.getControle().keyPressed(naveDois, e);
+        public void keyReleased(KeyEvent e) {   //有按鍵放開時
+        	System.out.println("keyPelease1 start");
+        	
+            naveUm.getControle().keyReleased(naveUm, e);//傳送按鍵類別給玩家1物件做後續控制
+            if (p2) {  //如果是雙人遊戲
+                naveDois.getControle().keyReleased(naveDois, e);//傳送按鍵類別給玩家2物件做後續控制
             }
+            
         }
 
     }
