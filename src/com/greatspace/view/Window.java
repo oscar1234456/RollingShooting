@@ -30,7 +30,7 @@ public class Window {
 	 */
     public Window() { 
 
-            Game gameCore = new Game(); //建構遊戲核心
+            Game gameCore = new Game(); //建構遊戲核心(JPanel)
          							
             gameCore.checkPlayer();//呼叫函式確認玩家人數
             frame.add(gameCore);
