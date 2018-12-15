@@ -17,24 +17,33 @@ public enum Controller implements IStrategy { //列舉
     PLAYER_1 {
         @Override
         public void keyPressed(Player player, KeyEvent key){
-            int codigo = key.getKeyCode();
-            if (!player.isMorto()) {
+           System.out.println("keyPressed2 s");
+        	int codigo = key.getKeyCode();
+            if (!player.isMorto()) { //如果玩家沒死時
                 switch(codigo){
-                    case KeyEvent.VK_G:
+                    case KeyEvent.VK_G: //發射飛彈                    	
                         player.atira();
+                        System.out.println("Fire");
                         break;
                     case KeyEvent.VK_W:
                         player.setDy(-1);
+                        System.out.println("up");
                         break;
                     case KeyEvent.VK_S:
                         player.setDy(1);
+                        System.out.println("down");
                         break;
                     case KeyEvent.VK_A:
                         player.setDx(-1);
+                        System.out.println("left");
                         break;
                     case KeyEvent.VK_D:
                         player.setDx(1);
+                        System.out.println("right");
                         break;
+                   
+                    default:
+                    	System.out.println("none");
                 }
             }
         }
@@ -46,16 +55,22 @@ public enum Controller implements IStrategy { //列舉
                 switch(codigo){
                     case KeyEvent.VK_W:
                         player.setDy(0);
+                        System.out.println("up2");
                         break;
                     case KeyEvent.VK_S:
                         player.setDy(0);
+                        System.out.println("down2");
                         break;
                     case KeyEvent.VK_A:
                         player.setDx(0);
+                        System.out.println("left2");
                         break;
                     case KeyEvent.VK_D:
                         player.setDx(0);
+                        System.out.println("right2");
                         break;
+                    default:
+                    	System.out.println("none2");
                 }
             }
         }
