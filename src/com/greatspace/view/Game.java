@@ -217,23 +217,27 @@ public class Game extends JPanel implements ActionListener {
     private void initEnemy() {
         enemyHouse = new ArrayList<>();
         Enemy enemySample = new Enemy();//建構敵人樣本物件
+        
+        //載入敵人圖片
         ProxyImage enemy1ImageL = new ProxyImage("/com/greatspace/sprites/enemy_1.gif");
         ProxyImage enemy2ImageL = new ProxyImage("/com/greatspace/sprites/enemy_2.gif");
+        
         for (int i = 0; i < 1; i++) {
             Enemy ini = (Enemy) enemySample.clone();//複製敵人物件
-            ini.setX(Enemy.GerarPosX());
-            ini.setY(Enemy.GerarPosY());
+            ini.setX(Enemy.GerarPosX()); //設定隨機生成位置(X軸)
+            ini.setY(Enemy.GerarPosY()); //設定隨機生成位置(Y軸)
 
             if (i % 3 == 0) {
-                ini.setImagem(enemy2ImageL.loadImage().getImage());
+                ini.setImagem(enemy2ImageL.loadImage().getImage()); //設定為種類2的敵人圖片
             } else {
-                ini.setImagem(enemy1ImageL.loadImage().getImage());
+                ini.setImagem(enemy1ImageL.loadImage().getImage()); //設定為種類1的敵人圖片
             }
 
             ini.setAltura(ini.getImagem().getHeight(null)); //設立圖片邊界用以得知不可觸碰點
             ini.setLargura(ini.getImagem().getWidth(null));
 
             ini.setVisivel(true);
+            
             enemyHouse.add(ini);
             
         }
