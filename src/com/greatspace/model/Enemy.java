@@ -22,12 +22,18 @@ public class Enemy extends GameObject {
     public Enemy() {
     }
 
+    /**
+	 * @brief 用於取得隨機的生成位置(X軸)
+	*/
     public static int GerarPosX() {
 
         int aax = 456 + (int) (Math.random() * 1600);
         return aax;
     }
 
+    /**
+	 * @brief 用於取得隨機的生成位置(Y軸)
+	*/
     public static int GerarPosY() {
         int aay = 10 + (int) (Math.random() * 320);
 
