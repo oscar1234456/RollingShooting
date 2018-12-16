@@ -3,11 +3,8 @@
  *  - \subpage @改寫自author: Derick Felix
  *  - \subpage @Release: 1.0
  *  - \subpage @Data: 12/14/2018
- * 
- * @Class: Window
- * @Objective: 創建Window物件
- * 
  */
+ 
 
 package com.greatspace.view;
 
@@ -20,7 +17,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 
-
+/*
+* @Class: Window
+* @Objective: 創建Window物件
+* 
+*/
 public class Window {
 
 	public static JFrame frame= new JFrame("宇宙射擊"); //遊戲主畫面框架
