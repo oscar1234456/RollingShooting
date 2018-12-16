@@ -6,13 +6,8 @@ import com.greatspace.model.Enemy;
 import com.greatspace.model.Player;
 import com.greatspace.proxy.ProxyImage;
 
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,56 +21,71 @@ import javax.swing.*;
  * @Class: Game
  * @Objective: Control the game
  */
+
+
+
+/*
+* @Class: Game
+* @Objective: 創建遊戲核心(JPanel物件)
+*/
 public class Game extends JPanel implements ActionListener {
 
-    private int recp;
-    private final Image fundo;
-    private Image Inicio;
-    private final Player nave;
-    private final Timer timer;
-    private final Player naveUm;
-    private final Player naveDois;
-    private JDialog frm ;
-	private JRadioButton rob1 ;
+    private final Image gameBg; //儲存遊戲中背景圖
+	private Image menuBg; //儲存選單背景圖
+	
+    private final Player playerSample; //玩家樣本物件
+    private final Timer timer; //計時器
+    private final Player player1; //玩家1
+    private final Player player2; //玩家2
+    
+    //提示訊息(詢問遊戲人數使用)
+    private JDialog frm ; 
+	private JRadioButton rob1 ; 
 	private JRadioButton rob2;
 	private ButtonGroup bgroup ;
 	private JButton btn1 ;
 	private JButton btn2 ;
 
-    private boolean p2 = false;
-    private boolean emJogo;
-    private boolean inicio;
-    private boolean ganhoJogo;
+    private boolean isP2 = false; //是否為雙人模式
+    private boolean isInGame; //是否在遊戲中
+    private boolean isInMenu; //是否在選單畫面狀態
+    private boolean isWin; //是否贏了
    
 
-    private List<Enemy> inimigos;
+    private List<Enemy> enemyHouse; //儲存敵人的資料列
 
+    /**
+	 * @brief Game建構子
+	*/
     public Game() {
 
-        this.nave = new Player();
+        this.playerSample = new Player();
 
         setFocusable(true); //為了聆聽keyListener 須保持Focus
         setDoubleBuffered(true);
-        addKeyListener(new TecladoAdapter());
+        addKeyListener(new KeyBoardAdapter());
 
-        ImageIcon referencia = new ImageIcon(getClass().getResource("/com/greatspace/sprites/background.png"));
-        fundo = referencia.getImage();
+        //載入遊戲背景圖
+        ImageIcon gameBgL = new ImageIcon(getClass().getResource("/com/greatspace/sprites/background.png"));
+        gameBg = gameBgL.getImage();
 
-        naveUm = (Player) nave.clone();
-        naveUm.setX(100);
-        naveUm.setY(100);
-        naveUm.setControle(Controller.PLAYER_1);
+        //由玩家樣本複製新玩家
+        player1 = (Player) playerSample.clone();
+        player1.setX(100);
+        player1.setY(100);
+        player1.setControle(Controller.PLAYER_1);
 
-        naveDois = (Player) nave.clone();
-        naveDois.setX(100);
-        naveDois.setY(200);
-        naveDois.setControle(Controller.PLAYER_2);
+        player2 = (Player) playerSample.clone();
+        player2.setX(100);
+        player2.setY(200);
+        player2.setControle(Controller.PLAYER_2);
 
         //遊戲狀態
-        emJogo = false; //是否在遊戲中
-        ganhoJogo = false;//是否已經贏了
-        inicio = true;//在選單狀態
+        isInGame = false; //不在遊戲中
+        isWin = false;//尚未贏局
+        isInMenu = true;//在選單狀態中
 
+        //初始化敵人
         initEnemy();
 
         //設定計時器並且以Game game當聆聽者隨時執行actionPerformed
@@ -83,9 +93,13 @@ public class Game extends JPanel implements ActionListener {
         timer.start(); //開始計時 
     }
 
+    /**
+	 * @brief 跳出視窗確認玩家人數
+	*/
     public void checkPlayer() {
     	
-    	frm = new JDialog(Window.frame,"選擇遊玩模式",true);
+    	frm = new JDialog(Window.frame,"選擇遊玩模式",true); //設定主控者並建立物件
+    	
     	rob1 = new JRadioButton("單人遊玩");
     	rob2 = new JRadioButton("雙人遊玩");
     	bgroup = new ButtonGroup();
@@ -99,21 +113,31 @@ public class Game extends JPanel implements ActionListener {
     	frm.add(rob2);
     	frm.add(btn1);
     	frm.add(btn2);
-    	btn1.addActionListener(new playerCheck());
+    	
+    	//在此有兩項物件要使用相同程式碼故不使用Lambda運算式
+    	btn1.addActionListener(new playerCheck()); 
     	btn2.addActionListener(new playerCheck());
-    	rob1.setSelected(true);
+    	
+    	rob1.setSelected(true); //預設為單人遊戲
+    	//設定尺寸及位置
     	rob1.setBounds(20,40,140,20);
     	rob2.setBounds(20,70,140,20);
     	btn1.setBounds(20,100,140,20);
     	btn2.setBounds(20,130,140,20);
-    	frm.setLocationRelativeTo(null);
-    	frm.setResizable(false);
-    	frm.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     	frm.setSize(200, 200);
+    	
+    	frm.setLocationRelativeTo(Window.frame); //設定與遊戲視窗位置相關聯
+    	frm.setResizable(false); //設定不可縮放視窗
+    	frm.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); //設定關閉視窗按鍵無功效
+    	
     	frm.setVisible(true);
-    	frm.setModal(true);
+    	frm.setModal(true); //設定擁有目前主控權
     }
 
+    /**
+	 * @brief 用於在Window物件中建立JMenuBar
+	 * @param [out] JMenuBar 已經設計完成的JMenuBar物件
+	*/
     public JMenuBar createMenu() {
         
         JMenuBar menuBar = new JMenuBar(); //建構MenuBar物件
@@ -122,7 +146,7 @@ public class Game extends JPanel implements ActionListener {
        
         JMenuItem close = new JMenuItem("結束"); //建構JMenuItem物件
         
-        close.addActionListener((ActionEvent e) -> {   //匿名類別註冊事件
+        close.addActionListener((ActionEvent e) -> {   //Lambda運算式 actionPerformed
         	int choose1;
 			//確認使用者是否真的要離開
 			choose1 = JOptionPane.showConfirmDialog(null, "您確定要離開?", "離開", 
@@ -138,7 +162,7 @@ public class Game extends JPanel implements ActionListener {
 
         JMenuItem about = new JMenuItem("關於");
         
-        about.addActionListener((ActionEvent e) -> {	//匿名類別註冊事件
+        about.addActionListener((ActionEvent e) -> {	//Lambda運算式 actionPerformed
             JOptionPane.showMessageDialog(null, "<html><strong>宇宙射擊遊戲</strong><br><br> "
                     + "原作者: <strong>Derick Felix</strong>!<br>"
                     +"改善與改寫者: <strong>陳泰元</strong><br>"
@@ -148,8 +172,8 @@ public class Game extends JPanel implements ActionListener {
         });
         
         JMenuItem htp = new JMenuItem("遊戲說明");
-        htp.addActionListener((ActionEvent e) -> {
-        	if(p2==true) {
+        htp.addActionListener((ActionEvent e) -> {	//Lambda運算式 actionPerformed
+        	if(isP2==true) {
         		JOptionPane.showMessageDialog(null, "<html>"
         				+ "<strong>玩家 1</strong><br>"
                         + "發射子彈 - <strong>G</strong><br>"
@@ -186,27 +210,31 @@ public class Game extends JPanel implements ActionListener {
         return menuBar;
     }
 
+
+    /**
+	 * @brief 用於初始化敵人(包含數量,種類,出現位置,圖形邊界)
+	*/
     private void initEnemy() {
-        inimigos = new ArrayList<>();
-        Enemy inimigo = new Enemy();//建構敵人樣本物件
-        ProxyImage imagemInimigoUm = new ProxyImage("/com/greatspace/sprites/enemy_1.gif");
-        ProxyImage imagemInimigoDois = new ProxyImage("/com/greatspace/sprites/enemy_2.gif");
+        enemyHouse = new ArrayList<>();
+        Enemy enemySample = new Enemy();//建構敵人樣本物件
+        ProxyImage enemy1ImageL = new ProxyImage("/com/greatspace/sprites/enemy_1.gif");
+        ProxyImage enemy2ImageL = new ProxyImage("/com/greatspace/sprites/enemy_2.gif");
         for (int i = 0; i < 1; i++) {
-            Enemy ini = (Enemy) inimigo.clone();//複製敵人物件
+            Enemy ini = (Enemy) enemySample.clone();//複製敵人物件
             ini.setX(Enemy.GerarPosX());
             ini.setY(Enemy.GerarPosY());
 
             if (i % 3 == 0) {
-                ini.setImagem(imagemInimigoDois.loadImage().getImage());
+                ini.setImagem(enemy2ImageL.loadImage().getImage());
             } else {
-                ini.setImagem(imagemInimigoUm.loadImage().getImage());
+                ini.setImagem(enemy1ImageL.loadImage().getImage());
             }
 
             ini.setAltura(ini.getImagem().getHeight(null)); //設立圖片邊界用以得知不可觸碰點
             ini.setLargura(ini.getImagem().getWidth(null));
 
             ini.setVisivel(true);
-            inimigos.add(ini);
+            enemyHouse.add(ini);
             
         }
     }
@@ -215,23 +243,23 @@ public class Game extends JPanel implements ActionListener {
     public void paint(Graphics g) {
 
         Graphics2D graficos = (Graphics2D) g;
-        graficos.drawImage(fundo, 0, 0, null);
+        graficos.drawImage(gameBg, 0, 0, null); //預設先繪製gameBg背景圖
+       
+        if (isInGame) {
 
-        if (emJogo) {
-
-            if (naveUm.isMorto() == false) { //玩家還沒死
-                graficos.drawImage(naveUm.getImagem(), naveUm.getX(), naveUm.getY(), this);
+            if (player1.isMorto() == false) { //玩家還沒死
+                graficos.drawImage(player1.getImagem(), player1.getX(), player1.getY(), this);
             }
-            if (p2 == true) {
-                if (naveDois.isMorto() == false) {
-                    ImageIcon naveDois_ = new ImageIcon(getClass().getResource("/com/greatspace/sprites/ship2.gif"));
-                    naveDois.setImagem(naveDois_.getImage());
-                    graficos.drawImage(naveDois.getImagem(), naveDois.getX(), naveDois.getY(), this);
+            if (isP2 == true) {
+                if (player2.isMorto() == false) {
+                    ImageIcon player2_ = new ImageIcon(getClass().getResource("/com/greatspace/sprites/ship2.gif"));
+                    player2.setImagem(player2_.getImage());
+                    graficos.drawImage(player2.getImagem(), player2.getX(), player2.getY(), this);
                 }
             }
 
-            List<Bullet> misseis1 = naveUm.getMisseis();
-            List<Bullet> misseis2 = naveDois.getMisseis();
+            List<Bullet> misseis1 = player1.getMisseis();
+            List<Bullet> misseis2 = player2.getMisseis();
 
             for (int i = 0; i < misseis1.size(); i++) {
 
@@ -246,28 +274,28 @@ public class Game extends JPanel implements ActionListener {
 
             }
 
-            for (int i = 0; i < inimigos.size(); i++) {
+            for (int i = 0; i < enemyHouse.size(); i++) {
 
-                Enemy in = inimigos.get(i);
+                Enemy in = enemyHouse.get(i);
                 graficos.drawImage(in.getImagem(), in.getX(), in.getY(), this);
 
             }
 
             graficos.setColor(Color.WHITE);
-            graficos.drawString("Enemies: " + inimigos.size(), 5, 15);
+            graficos.drawString("Enemies: " + enemyHouse.size(), 5, 15);
 
-        } else if (ganhoJogo) {
+        } else if (isWin) {
 
-            ImageIcon ganhojogo = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won.png"));
+            ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won.png"));
 
-            graficos.drawImage(ganhojogo.getImage(), 0, 0, null);
+            graficos.drawImage(isWinBg.getImage(), 0, 0, null);
             
 
-        } else if (inicio) {
+        } else if (isInMenu) {
 
             ImageIcon bg_ = new ImageIcon(getClass().getResource("/com/greatspace/sprites/main_menu.png"));
-            Inicio = bg_.getImage();
-            graficos.drawImage(Inicio, 0, 0, null);
+            menuBg = bg_.getImage();
+            graficos.drawImage(menuBg, 0, 0, null);
 
         } else {
             ImageIcon fimJogo = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_over.png"));
@@ -275,20 +303,20 @@ public class Game extends JPanel implements ActionListener {
             graficos.drawImage(fimJogo.getImage(), 0, 0, null);
         }
 
-        g.dispose();
+        g.dispose(); //釋放系統資源 等待下次repaint
 
     }
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
     	System.out.println("ac main");
-        if (inimigos.isEmpty()) {
-            emJogo = false;
-            ganhoJogo = true;
+        if (enemyHouse.isEmpty()) {
+            isInGame = false;
+            isWin = true;
         }
 
-        List<Bullet> misseis1 = naveUm.getMisseis();
-        List<Bullet> misseis2 = naveDois.getMisseis();
+        List<Bullet> misseis1 = player1.getMisseis();
+        List<Bullet> misseis2 = player2.getMisseis();
 
         for (int i = 0; i < misseis1.size(); i++) {
 
@@ -313,78 +341,81 @@ public class Game extends JPanel implements ActionListener {
 
         }
 
-        for (int i = 0; i < inimigos.size(); i++) {
+        for (int i = 0; i < enemyHouse.size(); i++) {
 
-            Enemy in = inimigos.get(i);
+            Enemy in = enemyHouse.get(i);
 
             if (in.isVisivel()) {
                 in.mexer();
             } else {
-                inimigos.remove(i);
+                enemyHouse.remove(i);
             }
 
         }
 
-        naveUm.mexer();
-        naveDois.mexer();
+        player1.mexer();
+        player2.mexer();
         checarColisoes();
-        if (p2 == true) {
-            if (naveUm.isMorto() && naveDois.isMorto()) {
+        if (isP2 == true) {
+            if (player1.isMorto() && player2.isMorto()) {
 
-                emJogo = false;
+                isInGame = false;
 
             }
         }
-        repaint();
+        repaint();   
     }
 
+    /**
+   	 * @brief 檢查有無碰撞
+   	*/
     public void checarColisoes() {
 
-        Rectangle formaNave1 = naveUm.getBounds();
-        Rectangle formaNave2 = naveDois.getBounds();
+        Rectangle formaNave1 = player1.getBounds();
+        Rectangle formaNave2 = player2.getBounds();
         Rectangle formaInimigo;
         Rectangle formaMissel;
 
-        for (int i = 0; i < inimigos.size(); i++) {
+        for (int i = 0; i < enemyHouse.size(); i++) {
 
-            Enemy tempInimigo = inimigos.get(i);
+            Enemy tempInimigo = enemyHouse.get(i);
             formaInimigo = tempInimigo.getBounds();
 
             if (formaNave1.intersects(formaInimigo)) {
-                naveUm.setVisivel(false);
-                naveUm.setMorto(true);
-                if (p2 == false) {
-                    emJogo = false;
+                player1.setVisivel(false);
+                player1.setMorto(true);
+                if (isP2 == false) {
+                    isInGame = false;
                 }
             }
             if (formaNave2.intersects(formaInimigo)) {
-                naveDois.setVisivel(false);
-                naveDois.setMorto(true);
+                player2.setVisivel(false);
+                player2.setMorto(true);
             }
-            if (naveUm.isMorto() == false && naveDois.isMorto() == false) {
+            if (player1.isMorto() == false && player2.isMorto() == false) {
                 if (formaNave1.intersects(formaNave2)) {
-                    naveUm.setDx(0);
-                    naveUm.setDy(0);
+                    player1.setDx(0);
+                    player1.setDy(0);
                 }
                 if (formaNave2.intersects(formaNave1)) {
-                    naveDois.setDx(0);
-                    naveDois.setDy(0);
+                    player2.setDx(0);
+                    player2.setDy(0);
                 }
             }
 
         }
 
-        List<Bullet> misseis1 = naveUm.getMisseis();
-        List<Bullet> misseis2 = naveDois.getMisseis();
+        List<Bullet> misseis1 = player1.getMisseis();
+        List<Bullet> misseis2 = player2.getMisseis();
 
         for (int i = 0; i < misseis1.size(); i++) {
 
             Bullet tempMissel = misseis1.get(i);
             formaMissel = tempMissel.getBounds();
 
-            for (int j = 0; j < inimigos.size(); j++) {
+            for (int j = 0; j < enemyHouse.size(); j++) {
 
-                Enemy tempInimigo = inimigos.get(j);
+                Enemy tempInimigo = enemyHouse.get(j);
                 formaInimigo = tempInimigo.getBounds();
 
                 if (formaMissel.intersects(formaInimigo)) {
@@ -406,9 +437,9 @@ public class Game extends JPanel implements ActionListener {
             Bullet tempMissel = misseis2.get(i);
             formaMissel = tempMissel.getBounds();
 
-            for (int j = 0; j < inimigos.size(); j++) {
+            for (int j = 0; j < enemyHouse.size(); j++) {
 
-                Enemy tempInimigo = inimigos.get(j);
+                Enemy tempInimigo = enemyHouse.get(j);
                 formaInimigo = tempInimigo.getBounds();
 
                 if (formaMissel.intersects(formaInimigo)) {
@@ -427,11 +458,17 @@ public class Game extends JPanel implements ActionListener {
         }
     }
 
-    public boolean getP2() {
-        return this.p2;
+    /**
+   	 * @brief 取得是否為雙人狀態
+   	*/
+    public boolean getisP2() {
+        return this.isP2;
     }
 
-    private class TecladoAdapter extends KeyAdapter {
+    /**
+   	 * @brief 繼承KeyAdapter改寫按鍵事件
+   	*/
+    private class KeyBoardAdapter extends KeyAdapter {
 
         @Override
         public void keyPressed(KeyEvent e) { //有按鍵按下時
@@ -439,25 +476,25 @@ public class Game extends JPanel implements ActionListener {
         	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             	System.out.println("tec enter");
             	
-                if (emJogo == false) { //判別現在是否正在遊戲當中
+                if (isInGame == false) { //判別現在是否正在遊戲當中
                     //進來就表示不在遊戲中
-                	emJogo = true; //使遊戲狀態改為開始
+                	isInGame = true; //使遊戲狀態改為開始
                     
                 	//玩家狀態設定為 存活
-                	naveUm.setMorto(false);
-                    naveDois.setMorto(false);
-                    ganhoJogo = false; //贏局狀態改為false
+                	player1.setMorto(false);
+                    player2.setMorto(false);
+                    isWin = false; //贏局狀態改為false
                     
-                    if (inicio == true) { //離開選單畫面
-                        inicio = false;
+                    if (isInMenu == true) { //離開選單畫面
+                        isInMenu = false;
                     }
 
                     //初始化玩家位置
-                    naveUm.setX(100);
-                    naveUm.setY(100);
+                    player1.setX(100);
+                    player1.setY(100);
 
-                    naveDois.setX(100);
-                    naveDois.setY(200);
+                    player2.setX(100);
+                    player2.setY(200);
 
                     //初始化敵人物件
                     initEnemy();
@@ -465,14 +502,14 @@ public class Game extends JPanel implements ActionListener {
                 }
                 
             }else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  //如果按下Esc鍵時
-                emJogo = false; //將遊戲狀態改為不在遊戲中
+                isInGame = false; //將遊戲狀態改為不在遊戲中
 
                 System.out.println("Esc");
                 
             }else {			//如果不為Enter或Esc鍵時
-        		naveUm.getControle().keyPressed(naveUm, e); //傳送按鍵類別給玩家1物件做後續控制
-                if (p2) { //如果是雙人遊戲
-                    naveDois.getControle().keyPressed(naveDois, e); //傳送按鍵類別給玩家2物件做後續控制
+        		player1.getControle().keyPressed(player1, e); //傳送按鍵類別給玩家1物件做後續控制
+                if (isP2) { //如果是雙人遊戲
+                    player2.getControle().keyPressed(player2, e); //傳送按鍵類別給玩家2物件做後續控制
                 }
         	}
 
@@ -482,9 +519,9 @@ public class Game extends JPanel implements ActionListener {
         public void keyReleased(KeyEvent e) {   //有按鍵放開時
         	System.out.println("keyPelease1 start");
         	
-            naveUm.getControle().keyReleased(naveUm, e);//傳送按鍵類別給玩家1物件做後續控制
-            if (p2) {  //如果是雙人遊戲
-                naveDois.getControle().keyReleased(naveDois, e);//傳送按鍵類別給玩家2物件做後續控制
+            player1.getControle().keyReleased(player1, e);//傳送按鍵類別給玩家1物件做後續控制
+            if (isP2) {  //如果是雙人遊戲
+                player2.getControle().keyReleased(player2, e);//傳送按鍵類別給玩家2物件做後續控制
             }
             
         }
@@ -501,14 +538,14 @@ public class Game extends JPanel implements ActionListener {
     		if(btn == btn1) { //使用者按下確認時
     
     			if(rob1.isSelected()) {	 //使用者選擇單人遊玩時
-    				 p2 = false;
+    				 isP2 = false;
     				
     			}else {		//使用者選擇雙人遊玩時
-    				p2 = true;
+    				isP2 = true;
     			}
     			frm.setVisible(false); //將Dialog視窗關閉
     			frm.setModal(false); //主控權交還Window.Frame
-    			System.out.println(p2);
+    			System.out.println(isP2);
     			
     		}else {		//使用者按下取消時
     			
