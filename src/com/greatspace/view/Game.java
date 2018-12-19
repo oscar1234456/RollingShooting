@@ -233,7 +233,8 @@ public class Game extends JPanel implements ActionListener {
                 ini.setImagem(enemy1ImageL.loadImage().getImage()); //設定為種類1的敵人圖片
             }
 
-            ini.setAltura(ini.getImagem().getHeight(null)); //設立圖片邊界用以得知不可觸碰點
+            //設立圖片邊界用以得知不可觸碰點
+            ini.setAltura(ini.getImagem().getHeight(null)); 
             ini.setLargura(ini.getImagem().getWidth(null));
 
             ini.setVisivel(true);
