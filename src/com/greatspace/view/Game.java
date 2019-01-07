@@ -43,9 +43,9 @@ public class Game extends JPanel implements ActionListener {
     private final Player player1; //玩家1
     private final Player player2; //玩家2
     
-    private final int level1EnemyNum = 20;
-    private final int level2EnemyNum = 30;
-    private final int level3EnemyNum = 50;
+    private final int level1EnemyNum = 1;
+    private final int level2EnemyNum = 2;
+    private final int level3EnemyNum = 3;
     
     private int nowLevel = 1;
     
@@ -367,14 +367,21 @@ public class Game extends JPanel implements ActionListener {
             
         } else if (isWin) {
         		if(finalWin) {
-        			ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/space.png"));
+        			ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won3.png"));
                     graficos.drawImage(isWinBg.getImage(), 0, 0, null);
                     music.finalWinStart();
                    
                     
         		}else {
-        			ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won.png"));
-        			graficos.drawImage(isWinBg.getImage(), 0, 0, null);
+        			if(nowLevel==2) {
+        				ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won.png"));	
+        				graficos.drawImage(isWinBg.getImage(), 0, 0, null);
+        			}else if(nowLevel == 3) {
+        				ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won2.png"));
+        				graficos.drawImage(isWinBg.getImage(), 0, 0, null);
+        			}
+        			
+        			
         			music.winStart();
         		}
             
@@ -387,7 +394,7 @@ public class Game extends JPanel implements ActionListener {
             graficos.drawImage(menuBg, 0, 0, null);
 
         } else {
-            ImageIcon fimJogo = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_over.png"));
+           ImageIcon fimJogo = new ImageIcon(getClass().getResource("/com/greatspace/sprites/lose.png"));
             music.loseStart();
             graficos.drawImage(fimJogo.getImage(), 0, 0, null);
         }
@@ -431,6 +438,8 @@ public class Game extends JPanel implements ActionListener {
             	nowLevel=1;
                 initEnemy();
         }
+        
+       
 
         List<Bullet> misseis1 = player1.getMisseis();
         List<Bullet> misseis2 = player2.getMisseis();
@@ -618,6 +627,10 @@ public class Game extends JPanel implements ActionListener {
                     
                     if (isInMenu == true) { //離開選單畫面
                         isInMenu = false;
+                    }
+                    
+                    if(finalWin) {
+                    	finalWin = false;
                     }
 
                     //初始化玩家位置
