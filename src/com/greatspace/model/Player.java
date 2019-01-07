@@ -15,11 +15,12 @@ import java.util.List;
  */
 public class Player extends GameObject {
 
-    private int x, y;
+    private int x, y; //隱藏負類別變數
     private int dx, dy;
     private boolean morto;
     private static ProxyImage imagemProxy; //增加代理訪問層物件
     private Bullet missel;
+
     
     private Controller controle;
 
@@ -31,8 +32,8 @@ public class Player extends GameObject {
         
         this.setImagem(imagemProxy.loadImage().getImage());
 
-        this.setAltura(getImagem().getHeight(null));
-        this.setLargura(getImagem().getWidth(null));
+        this.setAltura(getImagem().getHeight(null));//計算圖片高度
+        this.setLargura(getImagem().getWidth(null));//計算圖片寬度
 
         misseis = new ArrayList<Bullet>();
         missel = new Bullet();
@@ -103,7 +104,6 @@ public class Player extends GameObject {
         Bullet mis = (Bullet) missel.clone();
         mis.setX(x + getLargura());
         mis.setY(y + getAltura()/2);
-        
         this.misseis.add(mis);
     }
 
