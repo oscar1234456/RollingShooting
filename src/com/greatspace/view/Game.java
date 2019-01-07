@@ -31,7 +31,11 @@ import javax.swing.*;
 */
 public class Game extends JPanel implements ActionListener {
 
-    private final Image gameBg; //儲存遊戲中背景圖
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final Image gameBg; //儲存遊戲中背景圖
 	private Image menuBg; //儲存選單背景圖
 	
     private final Player playerSample; //玩家樣本物件
@@ -40,8 +44,8 @@ public class Game extends JPanel implements ActionListener {
     private final Player player2; //玩家2
     
     private final int level1EnemyNum = 20;
-    private final int level2EnemyNum = 1;
-    private final int level3EnemyNum = 1;
+    private final int level2EnemyNum = 30;
+    private final int level3EnemyNum = 50;
     
     private int nowLevel = 1;
     
@@ -246,6 +250,7 @@ public class Game extends JPanel implements ActionListener {
         }
         
         for (int i = 0; i < enemyNumber; i++) {
+        	
             Enemy ini = (Enemy) enemySample.clone();//複製敵人物件
             ini.setX(Enemy.GerarPosX()); //設定隨機生成位置(X軸)
           
@@ -263,13 +268,44 @@ public class Game extends JPanel implements ActionListener {
 
             ini.setVisivel(true);
             
+            //ini.setVEL((int)(Math.random()*3));
+            switch(nowLevel) {
+            case 1:
+            	if(i%5==0) {
+                	ini.setVEL(1);
+           		// System.out.println("setVEL");
+           	 	}else if(i%2==0){
+           	 		ini.setVEL(1.8); 
+           	 	}else {
+           	 		ini.setVEL(2);
+           	 	}
+            	break;
+            case 2:
+            	if(i%5==0) {
+                	ini.setVEL(1);
+           		// System.out.println("setVEL");
+           	 	}else if(i%2==0){
+           	 		ini.setVEL(2); 
+           	 	}else {
+           	 		ini.setVEL(2.3);
+           	 	}
+            	break;
+            case 3:
+            	if(i%5==0) {
+                	ini.setVEL(1);
+           		// System.out.println("setVEL");
+           	 	}else if(i%2==0){
+           	 		ini.setVEL(2.3); 
+           	 	}else {
+           	 		ini.setVEL(2.5);
+           	 	}
+            	break;
+            }
+            
             enemyHouse.add(ini);
             
         }
-        for(int i=0;i<enemyHouse.size();i++) {
-        	 Enemy ini = enemyHouse.get(i);
-        	  ini.setVEL((int)(Math.random()*5));
-        }
+       
     }
 
     @Override
@@ -311,7 +347,6 @@ public class Game extends JPanel implements ActionListener {
 
                 Enemy in = enemyHouse.get(i);
                 graficos.drawImage(in.getImagem(), in.getX(), in.getY(), this);
-                System.out.println(in.getX());
 
             }
             if(enemyHouse.size()==1) {
@@ -328,7 +363,7 @@ public class Game extends JPanel implements ActionListener {
            }else {
         	 graficos.setColor(Color.GREEN);
            }
-            graficos.drawString("目前級數:  "+ nowLevel,5, 35);
+            graficos.drawString("目前級數: "+ nowLevel,5, 35);
             
         } else if (isWin) {
         		if(finalWin) {
@@ -363,7 +398,7 @@ public class Game extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-    	System.out.println("ac main");
+    	//System.out.println("ac main");
     	if(isInMenu) {
     		music.bgmStart();
     	}else {
@@ -428,6 +463,9 @@ public class Game extends JPanel implements ActionListener {
             Enemy in = enemyHouse.get(i);
 
             if (in.isVisivel()) {
+            	if(enemyHouse.size()==1) {
+            		in.setVEL(2.3);
+            	}
                 in.mexer();
             } else {
                 enemyHouse.remove(i);

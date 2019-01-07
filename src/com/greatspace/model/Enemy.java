@@ -1,9 +1,8 @@
 package com.greatspace.model;
 
-import java.awt.Image;
+
 import java.awt.Rectangle;
 
-import javax.swing.ImageIcon;
 
 /**
  * PROGRAMA DESENVOLVIDO POR DERICK FELIX.
@@ -16,8 +15,8 @@ public class Enemy extends GameObject {
     private int x;
     private int y;
 
-    private static final int LARGURA_TELA = 500;
-    private static  int VELOCIDADE = 1;
+   // private static final int LARGURA_TELA = 500;
+    private double speedV = 1;
 
     public Enemy() {
     }
@@ -45,7 +44,8 @@ public class Enemy extends GameObject {
             this.x = GerarPosX();
             this.y = GerarPosY();
         } else {
-            this.x -= VELOCIDADE;
+            this.x -= speedV;
+            //System.out.println(speedV);
         	//this.x -= 1;
         }
     }
@@ -70,8 +70,8 @@ public class Enemy extends GameObject {
     	//回傳三角形
         return new Rectangle(x, y, getLargura(), getAltura());
     }
-    public void setVEL(int tempv) {
-    	VELOCIDADE = tempv;
+    public void setVEL(double tempv) {
+    	speedV = tempv;
     }
 
 }

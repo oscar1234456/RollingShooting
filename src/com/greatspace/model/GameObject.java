@@ -17,8 +17,8 @@ import java.awt.Image;
 public abstract class GameObject implements Cloneable {
 
     private Image imagem;
-    private int x;
-    private int y;
+    //private int x;
+    //private int y;
     private int altura; //高度
     private int largura;//寬度
 

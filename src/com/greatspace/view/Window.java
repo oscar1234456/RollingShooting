@@ -9,12 +9,16 @@
 package com.greatspace.view;
 
 
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 
 /*
@@ -36,7 +40,8 @@ public class Window {
             gameCore.checkPlayer();//呼叫函式確認玩家人數
             frame.add(gameCore);
             frame.setJMenuBar(gameCore.createMenu());
-            frame.setDefaultCloseOperation(3); //3:按下關閉按鍵視窗就執行System.exit(0)的指令
+            frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); //設定為不要關閉視窗
+            
             frame.setSize(500, 420);
             frame.setLocationRelativeTo(null); //將視窗的位置擺向螢幕中央
             frame.setResizable(false); //不允許使用者控制視窗縮放功能
@@ -48,6 +53,7 @@ public class Window {
                 System.out.println("圖片錯誤: " + e); //萬一找不到時回報錯誤資訊
             }
             frame.setVisible(true);
+            frame.addWindowListener(new win());
 
     }
     
@@ -67,11 +73,25 @@ public class Window {
         }
         
             
-        Window window = new Window(); //建立視窗類別
+        new Window(); //建立視窗類別
         System.out.println("Run!"); //控制台輸出成功開始的訊息
         
 
     }
+    
+    class win extends WindowAdapter{
+    	public void windowClosing(WindowEvent e){
+    		int choose=1;
+			//確認使用者是否真的要離開
+			choose = JOptionPane.showConfirmDialog(frame, "您確定要離開?", "離開", 
+					JOptionPane.YES_NO_OPTION,JOptionPane.INFORMATION_MESSAGE);
+			
+			if(choose == 0) {
+            	System.exit(0); //關閉程式
+            }
+    	}
+    }
+    
     
     
 }

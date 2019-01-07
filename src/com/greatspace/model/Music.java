@@ -1,10 +1,15 @@
 package com.greatspace.model;
 
-import java.io.File;
+//import java.io.File;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+
+import java.net.URL;
+
+import com.greatspace.view.Window;
+
 import javafx.embed.swing.JFXPanel;
 
 public class Music {
@@ -32,10 +37,13 @@ public class Music {
 
 		try {
 			 
-			  File bgm_file = new File("src/com/greatspace/sprites/bgm.mp3");
-			  bgm_m = new Media(bgm_file.toURI().toString());
+			  //File bgm_file = new File(Music.class.getResource("../sprites/bgm.mp3").toURI());
+			  //System.out.println(bgm_file.toURI().toString());
+			System.out.println(Music.class.getResource("../sprites/bgm.mp3").toURI().toString());
+			URL sourceImage = Music.class.getResource("../sprites/bgm.mp3"); 
+			bgm_m = new Media(sourceImage.toURI().toString());
 			  bgm = new MediaPlayer(bgm_m);
-			 
+			  
 			}
 			catch (Exception ex) {
 			  System.out.println("bgm找不到");
@@ -43,8 +51,8 @@ public class Music {
 		
 		try {
 			 
-			  File shoot1_file = new File("src/com/greatspace/sprites/shoot1.mp3");
-			  shoot1_m = new Media(shoot1_file.toURI().toString());
+			  //File shoot1_file = new File("src/com/greatspace/sprites/shoot1.mp3");
+			  shoot1_m = new Media(Music.class.getResource("../sprites/shoot1.mp3").toURI().toString());
 			  shoot1 = new MediaPlayer(shoot1_m);
 			 
 			}
@@ -53,8 +61,8 @@ public class Music {
 			}
 		
 		try {
-			  File bgm_space_file = new File("src/com/greatspace/sprites/bgm_space.mp3");
-			  bgm_space_m = new Media(bgm_space_file.toURI().toString());
+			  //File bgm_space_file = new File("src/com/greatspace/sprites/bgm_space.mp3");
+			  bgm_space_m = new Media(Music.class.getResource("../sprites/bgm_space.mp3").toURI().toString());
 			  bgm_space = new MediaPlayer(bgm_space_m);
 			 
 			}
@@ -63,8 +71,8 @@ public class Music {
 			}
 		
 		try {
-			  File shoot2_file = new File("src/com/greatspace/sprites/shoot2.mp3");
-			  shoot2_m = new Media(shoot2_file.toURI().toString());
+			 // File shoot2_file = new File("src/com/greatspace/sprites/shoot2.mp3");
+			  shoot2_m = new Media(Music.class.getResource("../sprites/shoot2.mp3").toURI().toString());
 			  shoot2 = new MediaPlayer(shoot2_m);
 			 
 			}
@@ -74,8 +82,8 @@ public class Music {
 		
 		try {
 			 
-			  File lose_file = new File("src/com/greatspace/sprites/lose.mp3");
-			  lose_m = new Media(lose_file.toURI().toString());
+			  //File lose_file = new File("src/com/greatspace/sprites/lose.mp3");
+			  lose_m = new Media(Music.class.getResource("../sprites/lose.mp3").toURI().toString());
 			  lose = new MediaPlayer(lose_m);
 			 
 			}
@@ -85,8 +93,8 @@ public class Music {
 		
 		try {
 			 
-			  File win_file = new File("src/com/greatspace/sprites/win.mp3");
-			  win_m = new Media(win_file.toURI().toString());
+			 // File win_file = new File("src/com/greatspace/sprites/win.mp3");
+			  win_m = new Media(Music.class.getResource("../sprites/win.mp3").toURI().toString());
 			  win = new MediaPlayer(win_m);
 			 
 			}
@@ -96,23 +104,23 @@ public class Music {
 		
 		try {
 			 
-			  File bullet_crash_file = new File("src/com/greatspace/sprites/bullet_crash.mp3");
-			  bullet_crash_m = new Media(bullet_crash_file.toURI().toString());
+			  //File bullet_crash_file = new File("src/com/greatspace/sprites/bullet_crash.mp3");
+			  bullet_crash_m = new Media(Music.class.getResource("../sprites/bullet_crash.mp3").toURI().toString());
 			  bullet_crash = new MediaPlayer(bullet_crash_m);
 			 
 			}
 			catch (Exception ex) {
-			  System.out.println("shoot1找不到");
+			  System.out.println("bullet_crash找不到");
 			}
 		
 		try {
-			  File finalWin_file = new File("src/com/greatspace/sprites/finalWin.mp3");
-			  finalWin_m = new Media(finalWin_file.toURI().toString());
+			 // File finalWin_file = new File("src/com/greatspace/sprites/finalWin.mp3");
+			  finalWin_m = new Media(Music.class.getResource("../sprites/finalWin.mp3").toURI().toString());
 			  finalWin = new MediaPlayer(finalWin_m);
 			 
 			}
 			catch (Exception ex) {
-			  System.out.println("bgm_space找不到");
+			  System.out.println("finalWin找不到");
 			}
 	}
 	
