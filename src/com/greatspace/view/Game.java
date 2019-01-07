@@ -4,6 +4,7 @@ import com.greatspace.controller.Controller;
 import com.greatspace.model.Bullet;
 import com.greatspace.model.Enemy;
 import com.greatspace.model.Player;
+import com.greatspace.model.Music;
 import com.greatspace.proxy.ProxyImage;
 
 import java.awt.event.*;
@@ -38,6 +39,12 @@ public class Game extends JPanel implements ActionListener {
     private final Player player1; //玩家1
     private final Player player2; //玩家2
     
+    private final int level1EnemyNum = 20;
+    private final int level2EnemyNum = 1;
+    private final int level3EnemyNum = 1;
+    
+    private int nowLevel = 1;
+    
     //提示訊息(詢問遊戲人數使用)
     private JDialog frm ; 
 	private JRadioButton rob1 ; 
@@ -45,13 +52,15 @@ public class Game extends JPanel implements ActionListener {
 	private ButtonGroup bgroup ;
 	private JButton btn1 ;
 	private JButton btn2 ;
+	
+	private Music music;
 
     private boolean isP2 = false; //是否為雙人模式
     private boolean isInGame; //是否在遊戲中
     private boolean isInMenu; //是否在選單畫面狀態
     private boolean isWin; //是否贏了
-   
-
+    private boolean finalWin = false;
+    
     private List<Enemy> enemyHouse; //儲存敵人的資料列
 
     /**
@@ -59,6 +68,7 @@ public class Game extends JPanel implements ActionListener {
 	*/
     public Game() {
 
+    	music = new Music();
         this.playerSample = new Player();
 
         setFocusable(true); //為了聆聽keyListener 須保持Focus
@@ -66,7 +76,7 @@ public class Game extends JPanel implements ActionListener {
         addKeyListener(new KeyBoardAdapter());
 
         //載入遊戲背景圖
-        ImageIcon gameBgL = new ImageIcon(getClass().getResource("/com/greatspace/sprites/background.png"));
+        ImageIcon gameBgL = new ImageIcon(getClass().getResource("/com/greatspace/sprites/space.png"));
         gameBg = gameBgL.getImage();
 
         //由玩家樣本複製新玩家
@@ -217,14 +227,28 @@ public class Game extends JPanel implements ActionListener {
     private void initEnemy() {
         enemyHouse = new ArrayList<>();
         Enemy enemySample = new Enemy();//建構敵人樣本物件
+        int enemyNumber = 0;
         
         //載入敵人圖片
         ProxyImage enemy1ImageL = new ProxyImage("/com/greatspace/sprites/enemy_1.gif");
         ProxyImage enemy2ImageL = new ProxyImage("/com/greatspace/sprites/enemy_2.gif");
         
-        for (int i = 0; i < 1; i++) {
+        switch(nowLevel) {
+        case 1:
+        	enemyNumber = level1EnemyNum;
+        	break;
+        case 2:
+        	enemyNumber = level2EnemyNum;
+        	break;
+        case 3:
+        	enemyNumber = level3EnemyNum;
+        	break;
+        }
+        
+        for (int i = 0; i < enemyNumber; i++) {
             Enemy ini = (Enemy) enemySample.clone();//複製敵人物件
             ini.setX(Enemy.GerarPosX()); //設定隨機生成位置(X軸)
+          
             ini.setY(Enemy.GerarPosY()); //設定隨機生成位置(Y軸)
 
             if (i % 3 == 0) {
@@ -241,6 +265,10 @@ public class Game extends JPanel implements ActionListener {
             
             enemyHouse.add(ini);
             
+        }
+        for(int i=0;i<enemyHouse.size();i++) {
+        	 Enemy ini = enemyHouse.get(i);
+        	  ini.setVEL((int)(Math.random()*5));
         }
     }
 
@@ -283,28 +311,49 @@ public class Game extends JPanel implements ActionListener {
 
                 Enemy in = enemyHouse.get(i);
                 graficos.drawImage(in.getImagem(), in.getX(), in.getY(), this);
+                System.out.println(in.getX());
 
             }
-
-            graficos.setColor(Color.WHITE);
-            graficos.drawString("Enemies: " + enemyHouse.size(), 5, 15);
-
+            if(enemyHouse.size()==1) {
+            	 graficos.setColor(Color.RED);
+            }else {
+            	 graficos.setColor(Color.WHITE);
+            }
+            graficos.drawString("剩餘敵人: " + enemyHouse.size(), 5, 15);
+            
+            if(nowLevel == 1) {
+           	 graficos.setColor(Color.BLUE);
+           }else if(nowLevel == 2) {
+           	 graficos.setColor(Color.ORANGE);
+           }else {
+        	 graficos.setColor(Color.GREEN);
+           }
+            graficos.drawString("目前級數:  "+ nowLevel,5, 35);
+            
         } else if (isWin) {
-
-            ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won.png"));
-
-            graficos.drawImage(isWinBg.getImage(), 0, 0, null);
+        		if(finalWin) {
+        			ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/space.png"));
+                    graficos.drawImage(isWinBg.getImage(), 0, 0, null);
+                    music.finalWinStart();
+                   
+                    
+        		}else {
+        			ImageIcon isWinBg = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_won.png"));
+        			graficos.drawImage(isWinBg.getImage(), 0, 0, null);
+        			music.winStart();
+        		}
             
 
         } else if (isInMenu) {
-
+        	
+        	
             ImageIcon bg_ = new ImageIcon(getClass().getResource("/com/greatspace/sprites/main_menu.png"));
             menuBg = bg_.getImage();
             graficos.drawImage(menuBg, 0, 0, null);
 
         } else {
             ImageIcon fimJogo = new ImageIcon(getClass().getResource("/com/greatspace/sprites/game_over.png"));
-
+            music.loseStart();
             graficos.drawImage(fimJogo.getImage(), 0, 0, null);
         }
 
@@ -315,9 +364,37 @@ public class Game extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent arg0) {
     	System.out.println("ac main");
+    	if(isInMenu) {
+    		music.bgmStart();
+    	}else {
+    		music.bgmStop();
+    	}
+    	if(isInGame) {
+    		music.loseStop();
+    		music.winStop();
+    		music.finalWinStop();
+    		music.bgmSpaceStart();
+    	}else {
+    		music.bgmSpaceStop();
+    	}
+    	
         if (enemyHouse.isEmpty()) {
             isInGame = false;
             isWin = true;
+            if(nowLevel<3) {
+            	nowLevel++;
+                initEnemy();
+            }else {
+            	finalWin = true;
+            	nowLevel = 0;
+
+            	initEnemy();
+            }
+        }
+        
+        if(!isInGame&&!isWin) {
+            	nowLevel=1;
+                initEnemy();
         }
 
         List<Bullet> misseis1 = player1.getMisseis();
@@ -376,37 +453,47 @@ public class Game extends JPanel implements ActionListener {
    	*/
     public void checarColisoes() {
 
-        Rectangle formaNave1 = player1.getBounds();
-        Rectangle formaNave2 = player2.getBounds();
-        Rectangle formaInimigo;
-        Rectangle formaMissel;
+        Rectangle player1Area = player1.getBounds();
+        Rectangle player2Area = player2.getBounds();
+        Rectangle nowEnemy;
+        Rectangle nowBullet;
 
         for (int i = 0; i < enemyHouse.size(); i++) {
 
-            Enemy tempInimigo = enemyHouse.get(i);
-            formaInimigo = tempInimigo.getBounds();
+        	//取得Enemy庫中的enemy
+            Enemy tempEnemy = enemyHouse.get(i);
+            //取得目前enemy的三角形
+            nowEnemy = tempEnemy.getBounds();
 
-            if (formaNave1.intersects(formaInimigo)) {
+            //檢查三角位置是否相交
+            if (player1Area.intersects(nowEnemy)) {
                 player1.setVisivel(false);
-                player1.setMorto(true);
+                player1.setMorto(true);//註記玩家1死亡
+                //如果是單人模式則遊戲進入lose狀態
                 if (isP2 == false) {
                     isInGame = false;
                 }
             }
-            if (formaNave2.intersects(formaInimigo)) {
+            if (player2Area.intersects(nowEnemy)) {
                 player2.setVisivel(false);
                 player2.setMorto(true);
             }
-            if (player1.isMorto() == false && player2.isMorto() == false) {
-                if (formaNave1.intersects(formaNave2)) {
-                    player1.setDx(0);
-                    player1.setDy(0);
-                }
-                if (formaNave2.intersects(formaNave1)) {
-                    player2.setDx(0);
-                    player2.setDy(0);
+            if(isP2==true) {
+            	//如果玩家1及玩家2都還有生命
+                if (player1.isMorto() == false && player2.isMorto() == false) {
+                	//以下是判斷兩人是否相交
+                	//碰到時他們的力量會變弱
+                    if (player1Area.intersects(player2Area)) {
+                        player1.setDx(0);
+                        player1.setDy(0);
+                    }
+                    if (player2Area.intersects(player1Area)) {
+                        player2.setDx(0);
+                        player2.setDy(0);
+                    }
                 }
             }
+            
 
         }
 
@@ -416,23 +503,26 @@ public class Game extends JPanel implements ActionListener {
         for (int i = 0; i < misseis1.size(); i++) {
 
             Bullet tempMissel = misseis1.get(i);
-            formaMissel = tempMissel.getBounds();
+            nowBullet = tempMissel.getBounds();
 
             for (int j = 0; j < enemyHouse.size(); j++) {
 
-                Enemy tempInimigo = enemyHouse.get(j);
-                formaInimigo = tempInimigo.getBounds();
+                Enemy tempEnemy = enemyHouse.get(j);
+                nowEnemy = tempEnemy.getBounds();
 
-                if (formaMissel.intersects(formaInimigo)) {
-
-                    tempInimigo.setVisivel(false);
+                if (nowBullet.intersects(nowEnemy)) {
+                	music.bulletCrashStart();
+                    tempEnemy.setVisivel(false);
                     tempMissel.setVisivel(false);
 
                 }
-                if (formaMissel.intersects(formaNave2)) {
-
-                    tempMissel.setVisivel(false);
+                if(isP2==true) {
+                	 if (nowBullet.intersects(player2Area)) {
+                     	music.bulletCrashStart();
+                        tempMissel.setVisivel(false);
+                     }
                 }
+               
 
             }
 
@@ -440,21 +530,19 @@ public class Game extends JPanel implements ActionListener {
         for (int i = 0; i < misseis2.size(); i++) {
 
             Bullet tempMissel = misseis2.get(i);
-            formaMissel = tempMissel.getBounds();
+            nowBullet = tempMissel.getBounds();
 
             for (int j = 0; j < enemyHouse.size(); j++) {
 
-                Enemy tempInimigo = enemyHouse.get(j);
-                formaInimigo = tempInimigo.getBounds();
+                Enemy tempEnemy = enemyHouse.get(j);
+                nowEnemy = tempEnemy.getBounds();
 
-                if (formaMissel.intersects(formaInimigo)) {
-
-                    tempInimigo.setVisivel(false);
+                if (nowBullet.intersects(nowEnemy)) {
+                    tempEnemy.setVisivel(false);
                     tempMissel.setVisivel(false);
 
                 }
-                if (formaMissel.intersects(formaNave1)) {
-
+                if (nowBullet.intersects(player1Area)) {
                     tempMissel.setVisivel(false);
                 }
 
@@ -524,7 +612,8 @@ public class Game extends JPanel implements ActionListener {
         public void keyReleased(KeyEvent e) {   //有按鍵放開時
         	System.out.println("keyPelease1 start");
         	
-            player1.getControle().keyReleased(player1, e);//傳送按鍵類別給玩家1物件做後續控制
+        	//先向玩家1類別取得控制器列舉
+            player1.getControle().keyReleased(player1, e);//再傳送按鍵類別做後續控制
             if (isP2) {  //如果是雙人遊戲
                 player2.getControle().keyReleased(player2, e);//傳送按鍵類別給玩家2物件做後續控制
             }
