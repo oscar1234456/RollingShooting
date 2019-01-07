@@ -7,6 +7,7 @@ package com.greatspace.controller;
 
 import com.greatspace.interfaces.IStrategy;
 import com.greatspace.model.Player;
+import com.greatspace.model.Music;
 import java.awt.event.KeyEvent;
 
 /**
@@ -14,15 +15,18 @@ import java.awt.event.KeyEvent;
  * @author Dayvson
  */
 public enum Controller implements IStrategy { //列舉
+	
     PLAYER_1 {
+    	Music music = new Music();
         @Override
         public void keyPressed(Player player, KeyEvent key){
            System.out.println("keyPressed2 s");
         	int codigo = key.getKeyCode();
             if (!player.isMorto()) { //如果玩家沒死時
                 switch(codigo){
-                    case KeyEvent.VK_G: //發射飛彈                    	
+                    case KeyEvent.VK_G: //發射飛彈  
                         player.atira();
+                        music.shoot1Start(); 	
                         System.out.println("Fire");
                         break;
                     case KeyEvent.VK_W:
@@ -53,6 +57,10 @@ public enum Controller implements IStrategy { //列舉
             int codigo = key.getKeyCode();
             if (!player.isMorto()) {
                 switch(codigo){
+	                case KeyEvent.VK_G: //發射飛彈  
+	                    music.shoot1Start(); 	
+	                    //System.out.println("Fire");
+	                    break;
                     case KeyEvent.VK_W:
                         player.setDy(0);
                         System.out.println("up2");
@@ -76,6 +84,7 @@ public enum Controller implements IStrategy { //列舉
         }
     },
     PLAYER_2 {
+    	Music music = new Music();
         @Override
         public void keyPressed(Player player, KeyEvent key){
             int codigo = key.getKeyCode();
@@ -83,6 +92,7 @@ public enum Controller implements IStrategy { //列舉
                 switch(codigo){
                     case KeyEvent.VK_INSERT:
                         player.atira();
+                        music.shoot2Start();
                         break;
                     case KeyEvent.VK_UP:
                         player.setDy(-1);
