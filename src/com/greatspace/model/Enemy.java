@@ -17,7 +17,7 @@ public class Enemy extends GameObject {
     private int y;
 
     private static final int LARGURA_TELA = 500;
-    private static final int VELOCIDADE = 1;
+    private static  int VELOCIDADE = 1;
 
     public Enemy() {
     }
@@ -46,6 +46,7 @@ public class Enemy extends GameObject {
             this.y = GerarPosY();
         } else {
             this.x -= VELOCIDADE;
+        	//this.x -= 1;
         }
     }
 
@@ -66,7 +67,11 @@ public class Enemy extends GameObject {
     }
 
     public Rectangle getBounds() {
+    	//回傳三角形
         return new Rectangle(x, y, getLargura(), getAltura());
+    }
+    public void setVEL(int tempv) {
+    	VELOCIDADE = tempv;
     }
 
 }
