@@ -3,13 +3,6 @@ package com.greatspace.model;
 import com.greatspace.proxy.ProxyImage;
 import java.awt.Rectangle;
 
-/**
- * PROGRAMA DESENVOLVIDO POR DERICK FELIX.
- * DATA:13/02/2016
- * VERSAO: 2.1
- * CLASSE: MISSEL 
- * OBJETIVO: CRIAR OS ATRIBUTOS DOS MISSEIS
- */
 public class Bullet extends GameObject {
 
     private int x;

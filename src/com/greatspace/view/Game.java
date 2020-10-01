@@ -15,15 +15,6 @@ import java.util.List;
 
 import javax.swing.*;
 
-/**
- * @author: Derick Felix
- * @Data: 02/13/2016
- * @Release: 2.1
- * @Class: Game
- * @Objective: Control the game
- */
-
-
 
 /*
 * @Class: Game
@@ -43,9 +34,9 @@ public class Game extends JPanel implements ActionListener {
     private final Player player1; //玩家1
     private final Player player2; //玩家2
     
-    private final int level1EnemyNum = 1;
-    private final int level2EnemyNum = 2;
-    private final int level3EnemyNum = 3;
+    private final int level1EnemyNum = 25;
+    private final int level2EnemyNum = 35;
+    private final int level3EnemyNum = 55;
     
     private int nowLevel = 1;
     
@@ -521,11 +512,12 @@ public class Game extends JPanel implements ActionListener {
                     isInGame = false;
                 }
             }
-            if (player2Area.intersects(nowEnemy)) {
-                player2.setVisivel(false);
-                player2.setMorto(true);
-            }
+           
             if(isP2==true) {
+            	 if (player2Area.intersects(nowEnemy)) {
+                     player2.setVisivel(false);
+                     player2.setMorto(true);
+                 }
             	//如果玩家1及玩家2都還有生命
                 if (player1.isMorto() == false && player2.isMorto() == false) {
                 	//以下是判斷兩人是否相交
@@ -614,7 +606,7 @@ public class Game extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) { //有按鍵按下時
             //如果按下Enter鍵
         	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            	System.out.println("tec enter");
+            	//System.out.println("tec enter");
             	
                 if (isInGame == false) { //判別現在是否正在遊戲當中
                     //進來就表示不在遊戲中
@@ -642,13 +634,13 @@ public class Game extends JPanel implements ActionListener {
 
                     //初始化敵人物件
                     initEnemy();
-                    System.out.println("Enters");
+                    //System.out.println("Enters");
                 }
                 
             }else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  //如果按下Esc鍵時
                 isInGame = false; //將遊戲狀態改為不在遊戲中
 
-                System.out.println("Esc");
+                //System.out.println("Esc");
                 
             }else {			//如果不為Enter或Esc鍵時
         		player1.getControle().keyPressed(player1, e); //傳送按鍵類別給玩家1物件做後續控制
@@ -661,7 +653,7 @@ public class Game extends JPanel implements ActionListener {
 
         @Override
         public void keyReleased(KeyEvent e) {   //有按鍵放開時
-        	System.out.println("keyPelease1 start");
+        	//System.out.println("keyPelease1 start");
         	
         	//先向玩家1類別取得控制器列舉
             player1.getControle().keyReleased(player1, e);//再傳送按鍵類別做後續控制
@@ -690,7 +682,7 @@ public class Game extends JPanel implements ActionListener {
     			}
     			frm.setVisible(false); //將Dialog視窗關閉
     			frm.setModal(false); //主控權交還Window.Frame
-    			System.out.println(isP2);
+    			//System.out.println(isP2);
     			
     		}else {		//使用者按下取消時
     			

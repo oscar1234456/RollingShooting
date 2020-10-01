@@ -1,4 +1,4 @@
-# Great Space
-Space Invaders Game Style
+# RollingShooting!
+原作者: derickfelix
+改寫者: Oscar Chen
 
-![alt name](https://github.com/derickfelix/greatspace/blob/master/src/com/greatspace/sprites/print.png)

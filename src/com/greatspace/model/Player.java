@@ -7,12 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * @author: Derick Felix
- * @Data: 02/13/2016
- * @Release: 2.1
- * @Class: Player
- */
 public class Player extends GameObject {
 
     private int x, y; //隱藏負類別變數

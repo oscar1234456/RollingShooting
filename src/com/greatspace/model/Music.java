@@ -37,9 +37,9 @@ public class Music {
 
 		try {
 			 
-			  //File bgm_file = new File(Music.class.getResource("../sprites/bgm.mp3").toURI());
-			  //System.out.println(bgm_file.toURI().toString());
-			System.out.println(Music.class.getResource("../sprites/bgm.mp3").toURI().toString());
+			//File bgm_file = new File(Music.class.getResource("../sprites/bgm.mp3").toURI());
+		    //System.out.println(bgm_file.toURI().toString());
+			//System.out.println(Music.class.getResource("../sprites/bgm.mp3").toURI().toString());
 			URL sourceImage = Music.class.getResource("../sprites/bgm.mp3"); 
 			bgm_m = new Media(sourceImage.toURI().toString());
 			  bgm = new MediaPlayer(bgm_m);

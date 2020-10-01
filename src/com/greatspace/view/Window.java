@@ -74,7 +74,7 @@ public class Window {
         
             
         new Window(); //建立視窗類別
-        System.out.println("Run!"); //控制台輸出成功開始的訊息
+        //System.out.println("Run!"); //控制台輸出成功開始的訊息
         
 
     }

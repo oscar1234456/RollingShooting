@@ -1,19 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.greatspace.model;
 
 import java.awt.Image;
 
-/**
- * PROGRAMA DESENVOLVIDO POR DERICK FELIX.
- * DATA:13/02/2016
- * VERSAO: 2.1
- * CLASSE: DESENHO 
- * OBJETIVO: CRIA OS ATRIBUTOS DE TODAS AS CLASSES
- */
 public abstract class GameObject implements Cloneable {
 
     private Image imagem;

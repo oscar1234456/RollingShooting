@@ -4,12 +4,6 @@ package com.greatspace.model;
 import java.awt.Rectangle;
 
 
-/**
- * PROGRAMA DESENVOLVIDO POR DERICK FELIX.
- * DATA:13/02/2016 VERSAO: 2.1
- * CLASSE: INIMIGO
- * OBJETIVO: CRIAR OS ATRIBUTOS DOS INIMIGOS
- */
 public class Enemy extends GameObject {
 
     private int x;
